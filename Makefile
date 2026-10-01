@@ -15,6 +15,7 @@ EFI_LIBDIR := /usr/lib
 
 MOK_KEY  := /var/lib/dkms/mok.key
 MOK_CERT := /var/lib/dkms/mok.pub
+MOK_CERT_PEM := mok.pem
 
 ESP_DIR  := /boot/efi/EFI/debian
 
@@ -69,10 +70,16 @@ $(APP).efi: $(APP).so
 		--target=efi-app-x86_64 \
 		$< $@
 
-$(APP)-signed.efi: check $(APP).efi
+$(MOK_CERT_PEM): $(MOK_CERT_DER)
+	openssl x509 \
+		-inform DER \
+		-in $(MOK_CERT_DER) \
+		-out $(MOK_CERT_PEM)
+
+$(APP)-signed.efi: check $(APP).efi $(MOK_CERT_PEM)
 	sudo $(SBSIGN) \
 		--key $(MOK_KEY) \
-		--cert $(MOK_CERT) \
+		--cert $(MOK_CERT_PEM) \
 		--output $@ \
 		$(APP).efi
 
@@ -92,4 +99,5 @@ clean:
 		$(APP).o \
 		$(APP).so \
 		$(APP).efi \
-		$(APP)-signed.efi
+		$(APP)-signed.efi \
+		$(MOK_CERT_PEM)
