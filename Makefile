@@ -33,11 +33,12 @@ LDFLAGS := \
 	-znocombreloc \
 	-T $(EFI_LDS) \
 	-shared \
+	--no-undefined \
 	-Bsymbolic \
-	$(EFI_CRT) \
-	-L$(EFI_LIBDIR) \
-	-lefi \
-	-lgnuefi
+	-L$(EFI_LIBDIR)
+
+# Static libraries must follow the objects that reference their symbols.
+LDLIBS := -lefi -lgnuefi
 
 EFI_SECTIONS := \
 	-j .text \
@@ -59,11 +60,11 @@ check:
 	@test -f $(MOK_KEY) || (echo "Missing $(MOK_KEY)" && exit 1)
 	@test -f $(MOK_CERT_DER) || (echo "Missing $(MOK_CERT_DER)" && exit 1)
 
-$(APP).o: $(APP).c
+$(APP).o: $(APP).c Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(APP).so: $(APP).o
-	$(LD) $(LDFLAGS) $(APP).o -o $@
+$(APP).so: $(APP).o Makefile
+	$(LD) $(LDFLAGS) $(EFI_CRT) $(APP).o -o $@ $(LDLIBS)
 
 $(APP).efi: $(APP).so
 	$(OBJCOPY) $(EFI_SECTIONS) \
