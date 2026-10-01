@@ -17,7 +17,7 @@ MOK_KEY  := /var/lib/dkms/mok.key
 MOK_CERT_DER := /var/lib/dkms/mok.pub
 MOK_CERT_PEM := mok.pem
 
-ESP_DIR  := /boot/efi/EFI/debian
+ESP_DIR  := /boot/efi/EFI/Debian
 
 CFLAGS := \
 	-I$(EFI_INC) \
