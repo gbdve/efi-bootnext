@@ -14,7 +14,7 @@ EFI_LDS   := /usr/lib/elf_x86_64_efi.lds
 EFI_LIBDIR := /usr/lib
 
 MOK_KEY  := /var/lib/dkms/mok.key
-MOK_CERT := /var/lib/dkms/mok.pub
+MOK_CERT_DER := /var/lib/dkms/mok.pub
 MOK_CERT_PEM := mok.pem
 
 ESP_DIR  := /boot/efi/EFI/debian
@@ -57,7 +57,7 @@ check:
 	@test -f $(EFI_CRT) || (echo "Missing $(EFI_CRT)" && exit 1)
 	@test -f $(EFI_LDS) || (echo "Missing $(EFI_LDS)" && exit 1)
 	@test -f $(MOK_KEY) || (echo "Missing $(MOK_KEY)" && exit 1)
-	@test -f $(MOK_CERT) || (echo "Missing $(MOK_CERT)" && exit 1)
+	@test -f $(MOK_CERT_DER) || (echo "Missing $(MOK_CERT_DER)" && exit 1)
 
 $(APP).o: $(APP).c
 	$(CC) $(CFLAGS) -c $< -o $@
